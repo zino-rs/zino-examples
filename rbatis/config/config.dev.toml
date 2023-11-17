@@ -1,0 +1,22 @@
+# --env=dev
+
+name = "data-cube"
+version = "0.1.0"
+
+[debug]
+host = "127.0.0.1"
+port = 6070
+
+[main]
+host = "127.0.0.1"
+port = 6080
+
+[database]
+namespace = "dc"
+
+[[mysql]]
+host = "127.0.0.1"
+port = 3306
+database = "data_cube"
+username = "root"
+password = "root"

@@ -1,10 +1,13 @@
 [package]
-name = "axum-app"
+name = "rbatis-demo"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 axum = "0.6.20"
+rbatis = "4.5.2"
+rbdc-mysql = "4.5.0"
+rbs = "4.5.0"
 serde = { version = "1.0.192", features = ["derive"] }
 tracing = "0.1.40"
 zino = { version = "0.14.4", features = ["axum"] }
