@@ -1,3 +1,0 @@
-  [2m2023-11-17T11:36:22.0405562+08:00[0m [33m WARN[0m [1;33mzino::application::axum_cluster[0m[33m: [33msignal received, starting graceful shutdown[0m
-    [2;3mat[0m C:\Users\panza\.cargo\registry\src\rsproxy.cn-0dccff568467c15b\zino-0.14.4\src\application\axum_cluster.rs:282
-
