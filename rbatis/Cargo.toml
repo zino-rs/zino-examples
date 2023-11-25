@@ -8,9 +8,9 @@ axum = "0.6.20"
 rbatis = "4.5.2"
 rbdc-mysql = "4.5.0"
 rbs = "4.5.0"
-serde = { version = "1.0.192", features = ["derive"] }
+serde = { version = "1.0.193", features = ["derive"] }
 tracing = "0.1.40"
-zino = { version = "0.14.4", features = ["axum"] }
-zino-core = { version = "0.15.4", features = ["orm-mysql"] }
-zino-derive = "0.12.4"
-zino-model = "0.12.4"
+zino = { version = "0.15.1", features = ["axum"] }
+zino-core = { version = "0.16.1", features = ["orm-mysql"] }
+zino-derive = "0.13.1"
+zino-model = "0.13.1"

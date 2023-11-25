@@ -1,5 +1,5 @@
 use crate::{
-    controller::{bench, user},
+    controller::{bench, tag, user},
     model::{Tag, User},
 };
 use axum::{
@@ -25,12 +25,14 @@ pub fn routes() -> Vec<Router> {
         .route("/tag/new", post(Tag::new))
         .route("/tag/:id/delete", post(Tag::delete))
         .route("/tag/:id/update", post(Tag::update))
-        .route("/tag/:id/view", get(Tag::view))
+        .route("/tag/:id/view", get(tag::view))
         .route("/tag/list", get(Tag::list));
     routes.push(router);
 
     // Bench controller.
-    let router = Router::new().route("/bench/rbatis/user/:id/view", get(bench::rbatis_user_view));
+    let router = Router::new()
+        .route("/bench/rbatis/user/:id/view", get(bench::rbatis_user_view))
+        .route("/bench/rbatis/tag/:id/view", get(bench::rbatis_tag_view));
     routes.push(router);
 
     routes
