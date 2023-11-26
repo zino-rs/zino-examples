@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>文件临时站</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- 引入 layui.css -->
+    <link href="/page/js/layui-v2.8.18/layui/css/layui.css" rel="stylesheet" />
+    <!-- 引入 layui.js -->
+    <script src="/page/js/layui-v2.8.18/layui/layui.js"></script>
+    <script src="/page/js/axios.min.js"></script>
+    <!-- 让 IE8/9 支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div
+      class="layui-row layui-col-space10"
+      style="margin-left: 50px; margin-right: 50px"
+    >
+      <div class="layui-col-xs6 layui-col-md12">
+        <div class="grid-demo grid-demo-bg2">
+          <h2>欢迎使用文件流转系统!!!!</h2>
+        </div>
+      </div>
+      <div class="layui-col-xs4 layui-col-sm7 layui-col-md6">
+        <div class="grid-demo layui-bg-green">
+          <h2>请上传临时存储的文件</h2>
+
+          <div
+            class="layui-upload-drag"
+            style="display: block"
+            id="ID-upload-demo-drag"
+          >
+            <i class="layui-icon layui-icon-upload"></i>
+            <div>点击上传，或将文件拖拽到此处</div>
+            <div
+              class="layui-progress layui-progress-big"
+              lay-showpercent="true"
+              lay-filter="ID-upload-demo-progress"
+            >
+              <div class="layui-progress-bar" lay-percent="0%"></div>
+            </div>
+          </div>
+          <div class="layui-hide" id="ID-upload-demo-preview">
+            <hr />
+            <p>默认保存3天</p>
+            <p>文件短码：</p>
+            <h2 id="short_code"></h2>
+            <p>分享网址：</p>
+            <p id="share_site"></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="layui-col-xs4 layui-col-sm5 layui-col-md6">
+        <div class="grid-demo layui-bg-green">
+          <h3>文件提取</h3>
+          <div class="layui-row layui-col-space10">
+            <div style="margin: 40px">
+              文件短码:
+              <input
+                name="short_code"
+                id="file_short_code"
+                class="layui-input"
+                style="margin-left: 20px"
+              />
+            </div>
+            <div class="layui-btn-container" style="text-align: center">
+              <button
+                type="button"
+                class="layui-btn layui-btn-warm layui-btn-radius"
+                id="dowwnloadbtn"
+              >
+                下载文件
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="layui-col-xs6 layui-col-md12">
+        <div class="grid-demo grid-demo-bg2">
+          <h2>POWER BY ZINO!!!!</h2>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      layui.use(function () {
+        var upload = layui.upload;
+        var $ = layui.$;
+        var element = layui.element;
+        var url_prefix = "";
+
+        function downloadfile() {
+          short_code = document.getElementById("file_short_code").value;
+          if(short_code==""){
+            layer.msg("请填写取件码");
+            return;
+          }
+          axios
+            .get(url_prefix + "/file/getshare", {
+              params: {
+                short_code: short_code,
+              },
+            })
+            .then(function (response) {
+              console.log(response.data.data);
+              if (response.data.status == 200) {
+                var a = document.createElement("a");
+                a.download = response.data.data.entry.file_name;
+                a.href = response.data.data.entry.file_url;
+                a.id = "dmsodmosdsodmsdom";
+                // 修复firefox中无法触发click
+                $("body").append(a);
+                a.click();
+                a.remove();
+              }
+            })
+            .catch(function (error) {
+              layer.msg("取件码错误");
+              console.log(error);
+            })
+            .finally(function () {
+              // always executed
+            });
+        }
+        $("#dowwnloadbtn").click(downloadfile);
+        // 渲染
+        upload.render({
+          elem: "#ID-upload-demo-drag",
+          url: url_prefix + "/file/share", // 实际使用时改成您自己的上传接口即可。
+          size: 6000 * 1024,
+          accept: "file", // 普通文件
+          before: function (obj) {
+            $("#ID-upload-demo-preview").addClass("layui-hide");
+          },
+          progress: function (n, elem, res, index) {
+            var percent = n + "%"; // 获取进度百分比
+            element.progress("ID-upload-demo-progress", percent); // 可配合 layui 进度条元素使用
+
+            // 得到当前触发的元素 DOM 对象
+            // console.log(elem); // 可通过该元素定义的属性值匹配到对应的进度条。
+            // console.log(res); // 得到 progress 响应信息
+
+            // console.log(index); // 得到当前上传文件的索引，多文件上传时的进度条控制
+            element.progress("demo-" + index, n + "%"); // 进度条
+          },
+          done: function (res) {
+            layer.msg("上传成功");
+            $("#ID-upload-demo-preview")
+              .removeClass("layui-hide")
+              .find("#short_code")
+              .text(res.data.entry.file[0].short_code);
+            $("#ID-upload-demo-preview")
+              .find("#share_site")
+              .text(window.location.href);
+            //console.log(res);
+          },
+        });
+      });
+    </script>
+  </body>
+</html>
