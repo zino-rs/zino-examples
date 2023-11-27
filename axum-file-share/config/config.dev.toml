@@ -1,0 +1,87 @@
+# --env=test
+
+name = "data-cube"
+version = "0.6.4"
+
+[dirs]
+uploads = "local/uploads"
+
+[uploads]
+expires = 86400
+
+[debug]
+host = "127.0.0.1"
+port = 6070
+
+[main]
+host = "127.0.0.1"
+port = 6080
+
+[[standby]]
+host = "127.0.0.1"
+port = 6081
+tag = "portal"
+
+[[standby]]
+host = "127.0.0.1"
+port = 6082
+tag = "admin"
+
+[server]
+page-dir = "public"
+sse-route = "/sse"
+websocket-route = "/websocket"
+body-limit =6000000000
+request-timeout= "1000s"
+
+[database]
+type = "postgres"
+namespace = "dc"
+
+[[postgres]]
+host = "127.0.0.1"
+port = 5577
+database = "data_cube"
+username = "postgres"
+password = "ldjhfksfjkjsudh1234"
+
+[tracing]
+filter = "info,sqlx=trace,tower_http=trace,zino=trace,zino_core=trace"
+display-filename = false
+display-line-number = false
+display-span-list = false
+
+[metrics]
+exporter = "prometheus"
+host = "127.0.0.1"
+port = 9000
+
+[[connector]]
+type = "arrow"
+name = "mock"
+root = "./data/mock/"
+
+[[connector.tables]]
+type = "csv"
+name = "users"
+path = "./users.csv"
+
+[[connector.tables]]
+type = "ndjson"
+name = "logs"
+url = "http://localhost:6080/assets/data/logs.ndjson"
+
+[connector.tables.schema]
+timestamp = "string"
+level = "string"
+fields = { message = "string" }
+target = "string"
+span = { "http.method" = "string", "http.target" = "string", "http.status_code" = "int" }
+
+[connector.variables]
+app-name = "data-cube"
+
+[openapi]
+show-docs = true
+rapidoc-route = "/rapidoc"
+custom-html = "local/docs/rapidoc.html"
