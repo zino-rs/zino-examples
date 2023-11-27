@@ -1,0 +1,41 @@
+[package]
+name = "axum-file-share"
+description = "An example for axum integration."
+version = "0.10.2"
+rust-version = "1.73"
+edition = "2021"
+publish = false
+
+[dependencies]
+axum = "0.6.20"
+faster-hex = "0.8.1"
+md-5 = "0.10.6"
+rand = "0.8.5"
+tracing = "0.1.40"
+
+[dependencies.serde]
+version = "1.0.193"
+features = ["derive"]
+
+[dependencies.zino]
+version = "0.15.1"
+features = ["axum"]
+
+[dependencies.zino-core]
+version = "0.16.1"
+features = [
+    "crypto-sm",
+    "validator-email",
+    "validator-phone-number",
+    "view-tera",
+    "connector",
+    "connector-arrow",
+    "orm-postgres",
+    "view-minijinja",
+]
+
+[dependencies.zino-derive]
+version = "0.13.1"
+
+[dependencies.zino-model]
+version = "0.13.1"
