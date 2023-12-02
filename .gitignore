@@ -24,3 +24,6 @@ Cargo.lock
 
 # SQLite data
 **/*.db
+
+# KipSQL
+/data
