@@ -2,5 +2,6 @@
 resolver = "2"
 members = [
     "axum",
+    "kip_sql",
     "rbatis",
 ]

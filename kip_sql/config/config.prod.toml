@@ -1,0 +1,13 @@
+name = "data-cube"
+version = "0.1.0"
+
+[debug]
+host = "127.0.0.1"
+port = 6070
+
+[main]
+host = "127.0.0.1"
+port = 6080
+
+[database]
+namespace = "dc"
