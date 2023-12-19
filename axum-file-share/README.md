@@ -2,6 +2,7 @@
 
 一个基于POSTGRESQL axum 的一个临时文件分享系统
 修改自己的postgresql密码端口
+增加了文件分片上传功能
 
 ```bash
 cargo run -- --env=dev #运行程序

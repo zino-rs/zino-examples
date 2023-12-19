@@ -1,4 +1,4 @@
-# --env=test
+# --env=dev
 
 name = "data-cube"
 version = "0.6.4"
@@ -7,7 +7,8 @@ version = "0.6.4"
 uploads = "local/uploads"
 
 [uploads]
-expires = 86400
+expires = 864
+short_code_base = 1000000
 
 [debug]
 host = "127.0.0.1"
@@ -40,10 +41,10 @@ namespace = "dc"
 
 [[postgres]]
 host = "127.0.0.1"
-port = 5577
+port = 5566
 database = "data_cube"
 username = "postgres"
-password = "ldjhfksfjkjsudh1234"
+password = "postgres"
 
 [tracing]
 filter = "info,sqlx=trace,tower_http=trace,zino=trace,zino_core=trace"
