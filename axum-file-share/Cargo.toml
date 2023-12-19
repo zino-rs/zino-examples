@@ -1,5 +1,5 @@
 [package]
-name = "axum-app"
+name = "axum-file-share"
 description = "An example for axum integration."
 version = "0.11.0"
 rust-version = "1.73"
@@ -19,7 +19,6 @@ version = "1.0.193"
 features = ["derive"]
 
 [dependencies.zino]
-path = "../../zino"
 version = "0.16.2"
 features = ["axum"]
 
