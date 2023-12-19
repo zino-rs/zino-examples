@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>临时文件暂存</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<!-- 引入 layui.css -->
+		<link href="/page/js/layui-v2.9.0/layui/css/layui.css" rel="stylesheet" />
+		<!-- 引入 layui.js -->
+		<script src="/page/js/layui-v2.9.0/layui/layui.js"></script>
+		<!-- 让 IE8/9 支持媒体查询，从而兼容栅格 -->
+		<!--[if lt IE 9]>
+		<script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+		<script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+	</head>
+	<body>
+		<div
+			class="layui-row layui-col-space10"
+			style="margin-left: 50px; margin-right: 50px"
+			>
+			<div class="layui-col-xs6 layui-col-md12" style="height: 200px;">
+				<div class="grid-demo grid-demo-bg2">
+					<h2>欢迎使用文件流转系统!!!!</h2>
+
+				</div>
+			</div>
+			<div style="margin:0;">
+				<div
+					class="layui-row layui-col-space20"
+					style="margin-left: 50px; margin-right: 50px"
+					>
+					<div class="layui-col-xs4 layui-col-sm7 layui-col-md6">
+						<div class="grid-demo layui-bg-green" style="padding: 20px;">
+							<h2>请上传临时存储的文件</h2>
+							<p>一次仅支持上传单个文件，多个文件请打包上传!!!</p>
+							<div
+								style="margin:10px"
+								id="uploading-bar"
+								class="layui-progress layui-progress-big layui-hide"
+								lay-showpercent="true"
+								lay-filter="ID-upload-demo-progress"
+								>
+								<div class="layui-progress-bar" lay-percent="0%"></div>
+
+							</div>
+							<div id="upload-processing" class="layui-hide">正在上传，请耐心等待.......</div>
+
+
+							<div
+								class="layui-upload-drag"
+								style="display: block"
+								id="ID-upload-demo-drag"
+								>
+								<i class="layui-icon layui-icon-upload"></i>
+								<div>点击上传，或将文件拖拽到此处</div>
+							</div>
+
+
+							<div class="layui-hide" id="ID-upload-demo-preview">
+								<hr />
+								<p>默认保存3天</p>
+								<p>文件名：</p>
+								<h2 id="share_file_name"></h2>
+								<p>文件短码（短码不包含字母I和字母O）：</p>
+								<h2 id="short_code"></h2>
+								<p>分享网址：</p>
+								<p id="share_site"></p>
+							</div>
+						</div>
+					</div>
+
+					<div class="layui-col-xs4 layui-col-sm5 layui-col-md6">
+						<div class="grid-demo layui-bg-green" style="padding: 20px;">
+							<h3>文件提取</h3>
+							<div class="layui-row layui-col-space10">
+								<div style="margin: 40px">
+									文件短码（短码不包含字母I和字母O）:
+									<input
+									name="short_code"
+									id="file_short_code"
+									class="layui-input"
+									style="margin-left: 20px"
+									/>
+								</div>
+								<div class="layui-btn-container" style="text-align: center">
+									<button
+										type="button"
+										class="layui-btn layui-btn-warm layui-btn-radius"
+										id="dowwnloadbtn"
+										>
+										下载文件
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="layui-col-xs6 layui-col-md12">
+				<div class="grid-demo layui-bg-green" style="height: 150px;margin-top: 40px;text-align: center;">
+					<p style="font-size: larger; padding-top: 20px;">
+						网站流转文件总数<span class="layui-badge layui-bg-orange" id="share_total"></span>,当前有效文件<span class="layui-badge layui-bg-blue" id="share_active"></span>
+					</p>
+					
+					<p style="font-size: larger;">
+						Copyright©2023.推荐使用1280*800以上分辨率显示器， chrome浏览器、火狐、360浏览器等新版本浏览本站
+						<h2 style="padding-top: 10px;">POWER BY MSJY&ZINO!!!!</h2>
+					</p>
+				</div>
+			</div>
+		</div>
+
+		<script>
+
+			layui.use(function () {
+				var upload = layui.upload;
+				var $ = layui.$;
+				var element = layui.element;
+				var url_prefix="";
+
+				$.ajax({
+					url:url_prefix+"/file/share/status",
+					type:"GET",
+				}).done(function(response){
+					console.log(response);
+					if (response.status == 200) {
+						$("#share_total")
+						.text(response.data.entry.share_status.total);
+						$("#share_active")
+						.text(response.data.entry.share_status.active);
+					}
+
+				}).fail(
+				function(error){
+					console.log(error);
+					layer.msg("提取码错误或文件已过期");
+				}
+				);
+
+				function downloadfile() {
+					short_code = document.getElementById("file_short_code").value;
+					if(short_code == ""){
+						layer.msg("填写提取码");
+						return;
+					}
+					$.ajax({
+						url:url_prefix+"/file/getshare?"+"short_code="+short_code,
+						type:"GET",
+					}).done(function(response){
+						// console.log(response);
+						if (response.status == 200) {
+							var a = document.createElement("a");
+							a.download = response.data.entry.file_name;
+							// a.href = url_prefix+response.data.entry.file_url;
+							a.href = "/page/download/"+response.data.entry.file_url.split("&")[1].split("=")[1];
+							a.id = "dmsodmosdsodmsdom";
+							// 修复firefox中无法触发click
+							$("body").append(a)
+							a.click();
+							a.remove();
+						}
+
+					}).fail(
+					function(error){
+						//console.log(error);
+						layer.msg("提取码错误或文件已过期");
+					}
+					);
+				}
+
+				$("#dowwnloadbtn").click(downloadfile);
+
+				let chunksnumber = 1;
+				let fileShardSize = 10 * 1024 * 1024; //每片文件大小
+				let filemd5Size = 2 * 1024 * 1024; //每片文件大小
+				let totalNum = 0;
+				let status = 1;
+				let size = 0;
+				let filemd5 = "";
+				let fileuuid = "";
+
+				// 渲染
+				upload.render({
+					elem: "#ID-upload-demo-drag",
+					url: url_prefix + "/file/share/bigfile", // 实际使用时改成您自己的上传接口即可。
+					size: 10000 * 1024,
+					auto: false,
+					accept: "file", // 普通文件
+					choose: function (obj) {
+						$("#ID-upload-demo-drag").addClass("layui-hide");
+						$("#uploading-bar").removeClass("layui-hide");
+						$("#upload-processing").removeClass("layui-hide");
+
+						data = this.data;
+						let files=obj.pushFile();
+						// console.log(files);
+						let index =0;
+						for (let key in files){
+							let file = files[key];
+							size = file.size;
+							totalNum = Math.ceil(size / fileShardSize);
+
+							let fileName = file.name;
+
+							//$("#name").val(fileName);
+							let fileExt = fileName.substring(fileName.lastIndexOf(".") + 1);
+							let progress = setInterval(function () {
+								// console.log(chunksnumber);
+								if (
+								totalNum === chunksnumber &&
+								(status === 2 || status === -1)
+								) {
+									//当总数和分片数相等
+									//console.log("循环结束");
+									clearInterval(progress); //结束循环
+								} else {
+									//console.log("上传开始");
+									//console.log(status);
+									if (status === 1) {
+										status = 0; //改为0避免直接循环 一次循环一次返回结果避免异步或者后置
+										//console.log(status);
+										data.filemd5 = filemd5;
+										data.fileName = fileName;
+										data.fileuuid = fileuuid;
+										data.chunksnumber = chunksnumber;
+										data.totalNum = totalNum;
+										data.fileExt = fileExt;
+										data.type = file.type;
+										//console.log(data);
+										let blob = file.slice(
+										(chunksnumber - 1) * fileShardSize,
+										chunksnumber * fileShardSize
+										); //分割file(二进制blob)对象，但类似分页找到目标blob对象
+										obj.upload(index, blob);
+									}
+								}
+							}, 100);
+						}
+					},
+
+					before: function (obj) {
+						$("#ID-upload-demo-preview").addClass("layui-hide");
+					},
+					done: function (res) {
+						console.log(res);
+						if (res.data.entry.upload_status === 100) {
+							// layer.msg("分片上传成功");
+							element.progress(
+							"ID-upload-demo-progress",
+							Math.ceil((chunksnumber * 100) / totalNum) + "%"
+							); //计算进度条
+							chunksnumber = chunksnumber + 1;
+							fileuuid = res.data.entry.file_uuid;
+							status = 1; //分片成功修改状态
+						} else if (res.data.entry.upload_status === 200) {
+							//上传完成
+							element.progress("ID-upload-demo-progress", "100%");
+							status = 2;
+							$("#path").val(res.upload);
+							layer.closeAll("loading"); //关闭loading
+							layer.msg("上传成功", { time: 1000, anim: 0 }, function () {
+								$(".layui-progress").hide();
+							});
+							$("#upload-processing").addClass("layui-hide");
+							layer.msg("上传成功");
+							$("#ID-upload-demo-preview")
+							.find("#share_file_name")
+							.text(res.data.entry.file[0].file_name);
+							$("#ID-upload-demo-preview")
+							.removeClass("layui-hide")
+							.find("#short_code")
+							.text(res.data.entry.file[0].short_code);
+							$("#ID-upload-demo-preview")
+							.find("#share_site")
+							.text(window.location.href);
+							$("#ID-upload-demo-drag")
+							.addClass("layui-hide")
+						} else {
+							//上传错误
+							status = -1;
+							layer.closeAll("loading"); //关闭loading
+							element.progress("ID-upload-demo-progress", "0%");
+							if (typeof res.upload == "undefined") {
+							} else {
+								$("#path").val(res.upload);
+							}
+							layer.msg(
+							"上传失败，请重试",
+							{ time: 1500, anim: 0 },
+							function () {
+								$(".layui-progress").hide();
+							}
+							);
+						}
+					},
+				});
+			});
+		</script>
+	</body>
+</html>

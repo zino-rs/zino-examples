@@ -35,6 +35,10 @@ pub struct File {
     localurl: String,
     #[schema(index_type = "text")]
     localpath: String,
+    #[schema(comment = "file download counts")]
+    download_count: u64,
+    #[schema(comment = "file max download counts")]
+    max_download_count: u64,
     #[schema(comment = "file expire time minute")]
     expire_time: u64,
 
@@ -76,6 +80,11 @@ impl File {
     pub fn set_unactive(&mut self) {
         self.status = "unactive".to_string();
     }
+
+    pub fn download_count_plus(&mut self) {
+        self.download_count = self.download_count + 1;
+    }
+
     pub fn get_name(&mut self) -> &str {
         &self.name
     }

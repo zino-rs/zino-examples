@@ -1,13 +1,10 @@
-# --env=test
+# --env=dev
 
 name = "data-cube"
 version = "0.6.4"
 
 [dirs]
 uploads = "local/uploads"
-
-[uploads]
-expires = 86400
 
 [debug]
 host = "127.0.0.1"
@@ -31,57 +28,39 @@ tag = "admin"
 page-dir = "public"
 sse-route = "/sse"
 websocket-route = "/websocket"
-body-limit =6000000000
-request-timeout= "1000s"
 
 [database]
-type = "postgres"
 namespace = "dc"
+max-rows = 10000
 
-[[postgres]]
+[[mariadb]]
 host = "127.0.0.1"
-port = 5577
+port = 4306
 database = "data_cube"
-username = "postgres"
-password = "ldjhfksfjkjsudh1234"
+username = "root"
+password = "GCILxF2OoLWjLKgqnSXSFErrmUU"
+
+[[mysql]]
+host = "127.0.0.1"
+port = 3306
+database = "data_cube"
+username = "root"
+password = "GCILxF2OoLWjLKgqnSXSFErrmUU"
+
+[[sqlite]]
+database = "local/data/main.db"
 
 [tracing]
-filter = "info,sqlx=trace,tower_http=trace,zino=trace,zino_core=trace"
-display-filename = false
-display-line-number = false
-display-span-list = false
+filter = "info,sqlx=info,zino=trace,zino_core=trace"
 
 [metrics]
 exporter = "prometheus"
 host = "127.0.0.1"
 port = 9000
 
-[[connector]]
-type = "arrow"
-name = "mock"
-root = "./data/mock/"
-
-[[connector.tables]]
-type = "csv"
-name = "users"
-path = "./users.csv"
-
-[[connector.tables]]
-type = "ndjson"
-name = "logs"
-url = "http://localhost:6080/assets/data/logs.ndjson"
-
-[connector.tables.schema]
-timestamp = "string"
-level = "string"
-fields = { message = "string" }
-target = "string"
-span = { "http.method" = "string", "http.target" = "string", "http.status_code" = "int" }
-
-[connector.variables]
-app-name = "data-cube"
+[jwt]
+max-age = "20m"
+refresh-interval = "7d"
 
 [openapi]
-show-docs = true
-rapidoc-route = "/rapidoc"
 custom-html = "local/docs/rapidoc.html"

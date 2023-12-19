@@ -33,7 +33,9 @@ pub fn routes() -> Vec<Router> {
     let router = Router::new()
         .route("/file/download", get(file::download))
         .route("/file/getshare", get(file::get_share_file))
-        .route("/file/share", post(file::share));
+        .route("/file/share", post(file::share))
+        .route("/file/share/bigfile", post(file::share_big_file))
+        .route("/file/share/status", get(file::share_file_status));
     routes.push(router);
 
     // User controller.
@@ -70,13 +72,15 @@ pub fn debug_routes() -> Vec<Router> {
     // User schema controller.
     let router = Router::new()
         .route("/user/schema", get(User::schema))
-        .route("/user/definition", get(User::definition));
+        .route("/user/definition", get(User::definition))
+        .route("/user/mock", get(User::mock));
     routes.push(router);
 
     // Tag schema controller.
     let router = Router::new()
         .route("/tag/schema", get(Tag::schema))
-        .route("/tag/definition", get(Tag::definition));
+        .route("/tag/definition", get(Tag::definition))
+        .route("/tag/mock", get(Tag::mock));
     routes.push(router);
 
     routes
